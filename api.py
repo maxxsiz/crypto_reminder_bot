@@ -7,7 +7,7 @@ cg = CoinGeckoAPI()
 for i in range(20):
     localtime = time.localtime()
     result = time.strftime("%I:%M:%S %p", localtime)
-    currentces = cg.get_price(ids='bitcoin,litecoin,ethereum', vs_currencies='tether')
+    currentces = cg.get_price(ids='bitcoin,litecoin,ethereum,xrp,cardano,tether,binancecoin,dogecoin,uniswap,chainlink,litecoin,tron,stellar,tezos,eos,miota,neo,dash,zcash', vs_currencies='usd')
     print(currentces)
     print(result)
     time.sleep(10)

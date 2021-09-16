@@ -8,7 +8,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 from misc import dp, bot
 import keyboards as kb
-import valid_func
+from valid_func import check_price_value, check_reminder_id
 
 class ReminderDelete(StatesGroup):
     waiting_for_reminder_id = State()

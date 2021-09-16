@@ -17,10 +17,10 @@ class TimezoneInfo(StatesGroup):
 @dp.message_handler(commands=['start','menu'])
 async def send_welcome(message: types.Message):
     if message.text == "/start":
-        await message.reply( """Hi, I'm a bot reminder. I track changes in cryptocurrency prices and can constantly notify you about changes. 
-                            There are two options. Constantly informing or informing when the price change for the chosen by you value (USD/USDT).""")
+        await message.reply( """Hi, I'm a bot reminder. I track changes in cryptocurrency prices and can constantly notify you about changes.\n
+                            There are two options. Constantly informing or informing when the price change for the chosen by you value (USD/USDT).\n
+                            For start press /menu :D""")
         #if check_register(message.from_user.id) == False:
-        await message.reply("For start press /menu :D")
         #else:
             #await bot.send_message(message.from_user.id, "Але для початку потрібно вказати яка у вас година, нажміть на варіант ...")
             #await bot.send_message(message.from_user.id, send_time_text("string"))

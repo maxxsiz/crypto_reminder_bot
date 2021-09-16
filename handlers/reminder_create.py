@@ -7,7 +7,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 from misc import dp, bot
-import valid_func
+from valid_func import check_coin_id, check_time, check_price_value
 
 class ReminderInfo(StatesGroup):
     waiting_for_reminder_coin_id = State()
