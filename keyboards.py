@@ -30,18 +30,6 @@ def add_reminder_markup():
                 InlineKeyboardButton("Add reminder with value.", callback_data="add_reminder_with_bd"))
     return markup
 
-def edit_reminder_markup():
-    markup = InlineKeyboardMarkup()
-    markup.row_width = 2
-    markup.one_time_keyboard=True
-    markup.add(InlineKeyboardButton("Змінити назву нагадування", callback_data="edit_name"),
-                InlineKeyboardButton("Змінити назву нагадування", callback_data="edit_description"),
-                InlineKeyboardButton("Змінити частоту нагадування", callback_data="edit_periodicity"),
-                InlineKeyboardButton("Змінити період перериву", callback_data="edit_break_time"))
-    return markup
-
-
-
 def yes_no_markup():
     markup = InlineKeyboardMarkup()
     markup.row_width = 1

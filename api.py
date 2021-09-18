@@ -1,17 +1,35 @@
 from pycoingecko import CoinGeckoAPI
-import pandas as pd
 import time
-import numpy as np
+import json
 
 cg = CoinGeckoAPI()
-for i in range(20):
+
+def get_price(coin):
+    with open('currentces.json') as f:
+        data = json.load(f)
+    return data[coin]['usd']
+
+def time_now():
     localtime = time.localtime()
     result = time.strftime("%I:%M:%S %p", localtime)
-    currentces = cg.get_price(ids='bitcoin,litecoin,ethereum,xrp,cardano,tether,binancecoin,dogecoin,uniswap,chainlink,litecoin,tron,stellar,tezos,eos,miota,neo,dash,zcash', vs_currencies='usd')
-    print(currentces)
-    print(result)
-    time.sleep(10)
+    return result 
 
-##binance_data = cg.get_exchanges_by_id('binance')
-#df_binance = pd.DataFrame(binance_data['tickers'], columns=['base','target','volume'])
-#print(df_binance.head())
+def get_coin_list():
+    with open('currentces.json') as f:
+        data = json.load(f)
+    return data
+
+def update_currentces():
+    currentces = cg.get_price(ids='bitcoin,litecoin,ethereum,xrp,cardano,tether,binancecoin,dogecoin,uniswap,chainlink,litecoin,tron,stellar,tezos,eos,miota,neo,dash,zcash', vs_currencies='usd')
+    with open('currentces.json', 'w') as json_file:
+        json.dump(currentces, json_file)
+
+
+starttime=time.time()
+while True:
+    currentces = cg.get_price(ids='bitcoin,litecoin,ethereum,xrp,cardano,tether,binancecoin,dogecoin,uniswap,chainlink,litecoin,tron,stellar,tezos,eos,miota,neo,dash,zcash', vs_currencies='usd')
+    with open('currentces.json', 'w') as json_file:
+        json.dump(currentces, json_file)
+    print(time_now())
+    time.sleep(60.0 - ((time.time() - starttime) % 60.0))
+

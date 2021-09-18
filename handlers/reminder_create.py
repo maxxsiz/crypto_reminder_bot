@@ -8,6 +8,8 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 from misc import dp, bot
 from valid_func import check_coin_id, check_time, check_price_value
+from db_func import add_reminder, get_new_id
+from api import time_now, currentces
 
 class ReminderInfo(StatesGroup):
     waiting_for_reminder_coin_id = State()
@@ -37,6 +39,7 @@ async def add_reminder_step_5(message: types.Message, state: FSMContext):
         await message.reply("Unvalid form. Try again.")
         return
     user_data = await state.get_data()
+    await add_reminder(int(message.from_user.id),await get_new_id(),'simple_type', True, user_data['coin_id'], message.text, "-", "-" )
     await message.answer(f"We will inform you about the current pirce {user_data['coin_id']}.\n"
                          f"every {message.text}\n")
     await state.finish()
@@ -50,7 +53,7 @@ class ReminderDbInfo(StatesGroup):
 async def add_reminderdb_callback(callback_query: types.CallbackQuery):
     await bot.delete_message(callback_query.from_user.id, callback_query.message.message_id)
     chat_id = callback_query.from_user.id
-    await bot.send_message(chat_id, "Впишіть короткий опис нагадування яке буде в вас висвітлюватися, наприклад: 'Відпочинь від комп'ютера'")
+    await bot.send_message(chat_id, "Choose coin.")
     await ReminderDbInfo.waiting_for_reminder_coin_id.set()
 
 @dp.message_handler(state=ReminderDbInfo.waiting_for_reminder_coin_id, content_types=types.ContentTypes.TEXT)
@@ -60,7 +63,7 @@ async def add_reminderdb_step_5(message: types.Message, state: FSMContext):
         return
     await state.update_data(coin_id=message.text)
     await ReminderDbInfo.next()
-    await message.answer("Впишіть, що ви будете нотувати, наприклад: кількість віджиманнь, вивчених слів, часу потраченого на навчання")
+    await message.answer("Choose your USD value at change on which we will inform you. \n (e.g. every 100USD, if price of BTC change from 45000 to 45100 we inform you)")
 
 @dp.message_handler(state=ReminderDbInfo.waiting_for_reminder_price_value, content_types=types.ContentTypes.TEXT)
 async def add_reminderdb_step_6(message: types.Message, state: FSMContext):
@@ -68,6 +71,7 @@ async def add_reminderdb_step_6(message: types.Message, state: FSMContext):
         await message.reply("Unvalid form. Try again.")
         return
     user_data = await state.get_data()
+    await add_reminder(int(message.from_user.id),await get_new_id(),'simple_type', True, user_data['coin_id'], message.text, time_now(), currentces[user_data['coin_id']]['usd'] )
     await message.answer(f"We will inform you about the current pirce {user_data['coin_id']}.\n"
                      f"every: {message.text} USD/USDT")
     await state.finish()

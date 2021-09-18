@@ -45,7 +45,7 @@ def add_reminder(TELEGRAM_ID,REM_ID,REM_TYPE,REM_STATUS,COIN_ID,REM_VALUE,VALUE_
 
 def simple_reminder_get_data(REM_VALUE):
     con, cur = db_connect()
-    cur.execute("SELECT TELEGRAM_ID, COIN_ID from REMINDERS where REM_TYPE='simple', REM_STATUS=True, REM_VALUE = {}".format(REM_VALUE,))  
+    cur.execute("SELECT TELEGRAM_ID, COIN_ID from REMINDERS where REM_TYPE='simple_type', REM_STATUS=True, REM_VALUE = {}".format(REM_VALUE,))  
     rows = cur.fetchall()  
     for row in rows: 
         print(row)
@@ -69,13 +69,22 @@ def freeze_reminder(REM_STATUS, REM_ID):
     con.commit()  
     con.close()
 
+def check_status(REM_ID):
+    con, cur = db_connect()
+    cur.execute("SELECT REM_STATUS from REMINDERS where REM_ID={}".format(REM_ID,)) 
+    status = cur.fetchone() 
+    con.commit()  
+    con.close()
+    print(status)
+    return status
+
 def edit_reminder(REM_VALUE, REM_ID):
     con, cur = db_connect()
     cur.execute("UPDATE REMINDERS set REM_VALUE = {} where REM_ID = {}".format(REM_VALUE, REM_ID)) 
     con.commit()  
     con.close()
 
-def show_all_reminder(TELEGRAM_ID):
+def show_all_reminders(TELEGRAM_ID):
     con, cur = db_connect()
     cur.execute("SELECT REM_ID, REM_TYPE, REM_STATUS, COIN_ID, REM_VALUE, VALUE_TIME, LAST_VALUE from REMINDERS where TELEGRAM_ID={}".format(TELEGRAM_ID,))  
     rows = cur.fetchall()  
@@ -87,8 +96,24 @@ def show_all_reminder(TELEGRAM_ID):
 
 def get_min_data():
     con, cur = db_connect()
-    cur.execute("SELECT TELEGRAM_ID, COIN_ID, REM_VALUE, VALUE_TIME, LAST_VALUE from REMINDERS where REM_TYPE='value', REM_STATUS=True")  
+    cur.execute("SELECT TELEGRAM_ID, COIN_ID, REM_VALUE, VALUE_TIME, LAST_VALUE from REMINDERS where REM_TYPE='value_type', REM_STATUS=True")  
     rows = cur.fetchall()  
     con.commit()  
     con.close()
     return rows
+
+def get_new_id(TELEGRAM_ID):
+    con, cur = db_connect()
+    cur.execute("SELECT REM_ID from REMINDERS where TELEGRAM_ID={}".format(TELEGRAM_ID,))  
+    rows = cur.fetchall()
+
+    if len(rows) == 0:
+        return int(str(TELEGRAM_ID) + "001")
+    ids = [str(rows[0])[-3:] for row in rows]
+
+    new_count = int(sorted(ids)[-1])+1
+    new_id = str(TELEGRAM_ID) + "000{}".format(str(new_count))[-3:]
+
+    con.commit()  
+    con.close()
+    return new_id
