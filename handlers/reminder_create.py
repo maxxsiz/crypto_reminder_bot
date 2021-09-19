@@ -9,7 +9,7 @@ sys.path.insert(0,parentdir)
 from misc import dp, bot
 from valid_func import check_coin_id, check_time, check_price_value
 from db_func import add_reminder, get_new_id
-from api import time_now, currentces
+from api import time_now, get_price, get_coin_list
 
 class ReminderInfo(StatesGroup):
     waiting_for_reminder_coin_id = State()
@@ -20,7 +20,8 @@ class ReminderInfo(StatesGroup):
 async def add_reminder_callback(callback_query: types.CallbackQuery):
     chat_id = callback_query.from_user.id
     await bot.delete_message(chat_id, callback_query.message.message_id)
-    await bot.send_message(chat_id, "Choose coin.")
+    coin_list = get_coin_list()
+    await bot.send_message(chat_id, "Choose coin." + '\n/'.join(' | '.join(("/"+str(key),val)) for (key,val) in coin_list.items()))
     await ReminderInfo.waiting_for_reminder_coin_id.set()
 
 @dp.message_handler(state=ReminderInfo.waiting_for_reminder_coin_id, content_types=types.ContentTypes.TEXT)
@@ -53,7 +54,8 @@ class ReminderDbInfo(StatesGroup):
 async def add_reminderdb_callback(callback_query: types.CallbackQuery):
     await bot.delete_message(callback_query.from_user.id, callback_query.message.message_id)
     chat_id = callback_query.from_user.id
-    await bot.send_message(chat_id, "Choose coin.")
+    coin_list = get_coin_list()
+    await bot.send_message(chat_id, "Choose coin." + '\n/'.join(' | '.join(("/"+str(key),val)) for (key,val) in coin_list.items()))
     await ReminderDbInfo.waiting_for_reminder_coin_id.set()
 
 @dp.message_handler(state=ReminderDbInfo.waiting_for_reminder_coin_id, content_types=types.ContentTypes.TEXT)
@@ -71,7 +73,7 @@ async def add_reminderdb_step_6(message: types.Message, state: FSMContext):
         await message.reply("Unvalid form. Try again.")
         return
     user_data = await state.get_data()
-    await add_reminder(int(message.from_user.id),await get_new_id(),'simple_type', True, user_data['coin_id'], message.text, time_now(), currentces[user_data['coin_id']]['usd'] )
+    await add_reminder(int(message.from_user.id),await get_new_id(),'simple_type', True, user_data['coin_id'], message.text, time_now(), get_price[user_data['coin_id']] )
     await message.answer(f"We will inform you about the current pirce {user_data['coin_id']}.\n"
                      f"every: {message.text} USD/USDT")
     await state.finish()
