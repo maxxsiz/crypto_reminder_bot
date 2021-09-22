@@ -89,7 +89,7 @@ class ReminderEdit(StatesGroup):
     waiting_for_check = State()
 
 
-@dp.callback_query_handler(lambda c: c.data == "edit_reminder", state = "*") # first step send reminders_list
+@dp.callback_query_handler(lambda c: c.data == "edit_reminder", state = "*") 
 async def edit_reminder_step_1(callback_query: types.CallbackQuery):
     chat_id = callback_query.from_user.id
     await bot.delete_message(chat_id, callback_query.message.message_id)
@@ -97,7 +97,7 @@ async def edit_reminder_step_1(callback_query: types.CallbackQuery):
     await bot.send_message(chat_id, await show_all_reminders(chat_id))
     await ReminderEdit.waiting_for_reminder_id.set()
 
-@dp.message_handler(state=ReminderEdit.waiting_for_reminder_id, content_types=types.ContentTypes.TEXT) # choose reminder, and send edit inlinebutton
+@dp.message_handler(state=ReminderEdit.waiting_for_reminder_id, content_types=types.ContentTypes.TEXT)
 async def edit_reminder_name(message: types.Message, state: FSMContext):
     if check_reminder_id(message.text.lower()) == False:
         await message.reply("Choose the number from list")
@@ -106,7 +106,7 @@ async def edit_reminder_name(message: types.Message, state: FSMContext):
     await ReminderEdit.next()
     await message.answer("Choose time / value.")
 
-@dp.message_handler(state=ReminderEdit.waiting_for_new_value_time, content_types=types.ContentTypes.TEXT) # choose reminder, and send edit inlinebutton
+@dp.message_handler(state=ReminderEdit.waiting_for_new_value_time, content_types=types.ContentTypes.TEXT) 
 async def edit_reminder_name(message: types.Message, state: FSMContext):
     if check_price_value(message.text.lower()) == False:
         await message.reply("Unvalid form. Try again.")

@@ -1,16 +1,11 @@
 from aiogram import executor
 from misc import dp
-import handlers
-import asyncio
 from multiprocessing import Process
 import json
 import time 
 from pycoingecko import CoinGeckoAPI
 from api import time_now
 from reminder_cheker import check_simple_reminders, check_db_reminders
-        
-
-
 
 
 def poling():

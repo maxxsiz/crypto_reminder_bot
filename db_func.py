@@ -25,11 +25,18 @@ def table_create():
         REM_STATUS BOOLEAN NOT NULL,
         COIN_ID TEXT NOT NULL,
         REM_VALUE FLOAT NOT NULL,
-        VALUE_TIME TIME NOT NULL,
-        LAST_VALUE FLOAT NOT NULL);''')
+        VALUE_TIME TIME ,
+        LAST_VALUE FLOAT );''')
 
     con.commit() 
     print("Table created successfully") 
+    con.close()
+
+def delete_table():
+    con, cur = db_connect()
+    cur.execute('DROP TABLE IF EXISTS REMINDERS')
+    con.commit() 
+    print("Table delete successfully") 
     con.close()
 
 def add_reminder(TELEGRAM_ID,REM_ID,REM_TYPE,REM_STATUS,COIN_ID,REM_VALUE,VALUE_TIME,LAST_VALUE):
