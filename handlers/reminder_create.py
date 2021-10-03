@@ -38,7 +38,7 @@ async def add_reminder_step_2(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(lambda c: c.data == "1hour" or c.data == "3hour" or c.data == "6hour" or c.data == "12hour" or c.data == "24hour" ,state=ReminderInfo.waiting_for_reminder_periodisity)
 async def add_reminder_step_5(callback_query: types.CallbackQuery, state: FSMContext):
     user_data = await state.get_data()
-    await add_reminder(int(callback_query.from_user.id),get_new_id(callback_query.from_user.id),'simple_type', True, user_data['coin_id'][1:], callback_query.data[:-4], "-", "-" )
+    add_reminder(int(callback_query.from_user.id),get_new_id(callback_query.from_user.id),'simple_typ', True, user_data['coin_id'][1:], callback_query.data[:-4], '2016-06-22 19:10:25', 1.1, )
     await bot.send_message(callback_query.from_user.id, f"We will inform you about the current pirce {user_data['coin_id']}.\n"
                          f"every {callback_query.data}\n")
     await state.finish()
@@ -77,7 +77,7 @@ async def add_reminderdb_step_6(message: types.Message, state: FSMContext):
     print(type(message.text))
     print(type(time_now()))
     print(type(get_price(user_data['coin_id'][1:])))
-    await add_reminder(int(message.from_user.id),get_new_id(message.from_user.id),'simple_type', True, user_data['coin_id'][1:], float(message.text), time_now(), get_price(user_data['coin_id'][1:]))
+    add_reminder(int(message.from_user.id),get_new_id(message.from_user.id),'value_typ', True, user_data['coin_id'][1:], float(message.text), time_now(), get_price(user_data['coin_id'][1:]))
     await message.answer(f"We will inform you about the current pirce {user_data['coin_id']}.\n"
                      f"every: {message.text} USD")
     await state.finish()

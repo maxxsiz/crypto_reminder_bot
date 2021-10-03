@@ -1,7 +1,7 @@
 from api import time_now
 import json
 from api import get_price, time_now, get_coin_list
-from db_func import get_min_data, update_value_reminder
+from db_func import check_status, get_min_data, update_value_reminder
 from reminder_sender import send_value_reminder, send_simple_reminder
 
 
@@ -9,9 +9,8 @@ def check_simple_reminders():
     data_rows = get_min_data()
     actual_coin_price_data = get_coin_list()
     data_for_sending = {}
-
+    print("check_status")
     for i in range(len(data_rows)):
-
         actual_coin_price = actual_coin_price_data[data_rows[i][2]]['usd']
         last_coin_price = data_rows[i][5]
         reminder_value = data_rows[i][3]

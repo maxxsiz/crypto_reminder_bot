@@ -6,7 +6,7 @@ import time
 from pycoingecko import CoinGeckoAPI
 from api import time_now
 from reminder_cheker import check_simple_reminders, check_db_reminders
-
+import handlers
 
 def poling():
    print("Hello from poling Process")

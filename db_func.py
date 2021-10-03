@@ -19,8 +19,8 @@ def db_connect():
 def table_create():
     con, cur = db_connect()
     cur.execute('''CREATE TABLE REMINDERS  
-        (TELEGRAM_ID INT NOT NULL,
-        REM_ID INT NOT NULL,
+        (TELEGRAM_ID BIGINT NOT NULL,
+        REM_ID BIGINT NOT NULL,
         REM_TYPE TEXT NOT NULL,
         REM_STATUS BOOLEAN NOT NULL,
         COIN_ID TEXT NOT NULL,
@@ -39,12 +39,12 @@ def delete_table():
     print("Table delete successfully") 
     con.close()
 
-def add_reminder(TELEGRAM_ID,REM_ID,REM_TYPE,REM_STATUS,COIN_ID,REM_VALUE,VALUE_TIME,LAST_VALUE):
+def add_reminder(TELEGRAM_ID,REM_ID,REM_TYP,REM_STATUS,COIN_ID,REM_VALUE,VALUE_TIME,LAST_VALUE):
     con, cur = db_connect()
     cur.execute(
         """INSERT INTO REMINDERS 
         (TELEGRAM_ID,REM_ID,REM_TYPE,REM_STATUS,COIN_ID,REM_VALUE,VALUE_TIME,LAST_VALUE) 
-        VALUES ({},{},{},{},{},{},{},{})""".format(TELEGRAM_ID,REM_ID,REM_TYPE,REM_STATUS,COIN_ID,REM_VALUE,VALUE_TIME,LAST_VALUE)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s);""",(TELEGRAM_ID,REM_ID,str(REM_TYP),REM_STATUS,COIN_ID,REM_VALUE,VALUE_TIME,LAST_VALUE)
     )
     con.commit()  
     print("Record inserted successfully")
@@ -52,7 +52,7 @@ def add_reminder(TELEGRAM_ID,REM_ID,REM_TYPE,REM_STATUS,COIN_ID,REM_VALUE,VALUE_
 
 def simple_reminder_get_data(REM_VALUE):
     con, cur = db_connect()
-    cur.execute("SELECT TELEGRAM_ID, COIN_ID from REMINDERS where REM_TYPE='simple_type' and REM_STATUS=True and REM_VALUE = {}".format(REM_VALUE,))  
+    cur.execute("SELECT TELEGRAM_ID, COIN_ID from REMINDERS where REM_TYPE='simple_typ' and REM_STATUS=True and REM_VALUE = %s;",(REM_VALUE,))  
     rows = cur.fetchall()  
     for row in rows: 
         print(row)
@@ -61,7 +61,7 @@ def simple_reminder_get_data(REM_VALUE):
 
 def value_reminder_get_data(REM_VALUE):
     con, cur = db_connect()
-    cur.execute("SELECT TELEGRAM_ID, COIN_ID from REMINDERS where REM_TYPE='value_type' and REM_STATUS=True and REM_VALUE = {}".format(REM_VALUE,))  
+    cur.execute("SELECT TELEGRAM_ID, COIN_ID from REMINDERS where REM_TYPE='value_type' and REM_STATUS=True and REM_VALUE = %s;",(REM_VALUE,))  
     rows = cur.fetchall()  
     for row in rows: 
         print(row)
@@ -70,40 +70,45 @@ def value_reminder_get_data(REM_VALUE):
 
 def delete_reminder(REM_ID):
     con, cur = db_connect()
-    cur.execute("DELETE from REMINDERS  where REM_ID={}".format(REM_ID,))
+    cur.execute("DELETE from REMINDERS  where REM_ID=%s;",(REM_ID,))
     con.commit()  
     con.close()
 
 def freeze_reminder(REM_STATUS, REM_ID):
     con, cur = db_connect()
-    cur.execute("UPDATE REMINDERS set REM_STATUS = {} where REM_ID = {}".format(REM_STATUS, REM_ID)) 
+    cur.execute("UPDATE REMINDERS set REM_STATUS = %s where REM_ID = %s;",(REM_STATUS, REM_ID)) 
     con.commit()  
     con.close()
 
 def check_status(REM_ID):
     con, cur = db_connect()
-    cur.execute("SELECT REM_STATUS from REMINDERS where REM_ID={}".format(REM_ID,)) 
-    status = cur.fetchone() 
+    cur.execute("SELECT REM_STATUS from REMINDERS where REM_ID=%s;",(REM_ID,)) 
+    status = cur.fetchone()[0]
     con.commit()  
     con.close()
-    print(status)
     return status
 
 def edit_reminder(REM_VALUE, REM_ID):
     con, cur = db_connect()
-    cur.execute("UPDATE REMINDERS set REM_VALUE = {} where REM_ID = {}".format(REM_VALUE, REM_ID)) 
+    cur.execute("UPDATE REMINDERS set REM_VALUE = %s where REM_ID = %s;",(REM_VALUE, REM_ID)) 
     con.commit()  
     con.close()
 
 def show_all_reminders(TELEGRAM_ID):
     con, cur = db_connect()
-    cur.execute("SELECT REM_ID, REM_TYPE, REM_STATUS, COIN_ID, REM_VALUE, VALUE_TIME, LAST_VALUE from REMINDERS where TELEGRAM_ID={}".format(TELEGRAM_ID,))  
+    cur.execute("SELECT REM_ID, REM_TYPE, REM_STATUS, COIN_ID, REM_VALUE, VALUE_TIME, LAST_VALUE from REMINDERS where TELEGRAM_ID=%s;",(TELEGRAM_ID,))  
     rows = cur.fetchall()  
-    for row in rows: 
-        print(row)
     con.commit()  
     con.close()
-    return rows
+    simple_text = "SIMPLE TYPE\n Reminder ID   |  Coin  | Time step | Reminder status\n"
+    value_text = "____________________________________________________________________\nVALUE TYPE\n Reminder ID   |  Coin  | Price step | Reminder status | Last price\n"
+    for row in rows: 
+        if row[1]=='simple_typ':
+            simple_text += "/{} | {} | {}hour(s) | {} \n".format(row[0], row[3], row[4], row[2])
+        else:
+            value_text += "/{} | {} | {}USD | {} | {}USD , {} \n".format(row[0], row[3], row[4], row[2], row[6], row[5])
+    text = simple_text + value_text
+    return text
 
 def get_min_data():
     con, cur = db_connect()
@@ -115,22 +120,31 @@ def get_min_data():
 
 def update_value_reminder(REM_ID, LAST_VALUE, VALUE_TIME):
     con, cur = db_connect()
-    cur.execute("UPDATE REMINDERS set LAST_VALUE= {}, VALUE_TIME = {} where REM_ID = {}".format(LAST_VALUE, VALUE_TIME, REM_ID)) 
+    cur.execute("UPDATE REMINDERS set LAST_VALUE= %s, VALUE_TIME = %s where REM_ID = %s;",(LAST_VALUE, VALUE_TIME, REM_ID)) 
     con.commit()  
     con.close()
 
 def get_new_id(TELEGRAM_ID):
     con, cur = db_connect()
-    cur.execute("SELECT REM_ID from REMINDERS where TELEGRAM_ID={}".format(TELEGRAM_ID,))  
+    cur.execute("SELECT REM_ID from REMINDERS where TELEGRAM_ID=%s;",(TELEGRAM_ID,))  
     rows = cur.fetchall()
-
     if len(rows) == 0:
         return int(str(TELEGRAM_ID) + "001")
-    ids = [str(rows[0])[-3:] for row in rows]
-
+    ids = [str(row[0])[-3:] for row in rows]
     new_count = int(sorted(ids)[-1])+1
     new_id = str(TELEGRAM_ID) + "000{}".format(str(new_count))[-3:]
 
     con.commit()  
     con.close()
     return new_id
+
+def reminder_id_list(TELEGRAM_ID):
+    con, cur = db_connect()
+    cur.execute("SELECT REM_ID from REMINDERS where TELEGRAM_ID=%s;",(TELEGRAM_ID,)) 
+    rows = cur.fetchall() 
+    con.commit()  
+    con.close()
+    id_list = [int(row[0]) for row in rows]
+    print(id_list)
+    return id_list
+    

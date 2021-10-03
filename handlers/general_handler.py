@@ -1,8 +1,5 @@
 from aiogram.dispatcher.webhook import SendMessage
 from aiogram import types
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
-from datetime import date, time
 import os,sys,inspect
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -10,9 +7,6 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 from misc import dp, bot
 import keyboards as kb
-
-class TimezoneInfo(StatesGroup):
-    current_user_time = State()
 
 @dp.message_handler(commands=['start','menu'])
 async def send_welcome(message: types.Message):
