@@ -72,11 +72,6 @@ async def add_reminderdb_step_6(message: types.Message, state: FSMContext):
         await message.reply("Choose from the list")
         return
     user_data = await state.get_data()
-    print(type(message.from_user.id))
-    print(type(user_data['coin_id']))
-    print(type(message.text))
-    print(type(time_now()))
-    print(type(get_price(user_data['coin_id'][1:])))
     add_reminder(int(message.from_user.id),get_new_id(message.from_user.id),'value_typ', True, user_data['coin_id'][1:], float(message.text), time_now(), get_price(user_data['coin_id'][1:]))
     await message.answer(f"We will inform you about the current pirce {user_data['coin_id']}.\n"
                      f"every: {message.text} USD")

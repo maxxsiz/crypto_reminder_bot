@@ -147,4 +147,13 @@ def reminder_id_list(TELEGRAM_ID):
     id_list = [int(row[0]) for row in rows]
     print(id_list)
     return id_list
-    
+
+
+def check_reminder_type(REM_ID):
+    con, cur = db_connect()
+    cur.execute("SELECT REM_TYPE from REMINDERS where REM_ID=%s;",(REM_ID,)) 
+    rem_type = cur.fetchone()[0] 
+    print(rem_type)
+    con.commit()  
+    con.close()
+    return rem_type

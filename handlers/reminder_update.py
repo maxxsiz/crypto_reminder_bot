@@ -9,7 +9,7 @@ sys.path.insert(0,parentdir)
 from misc import dp, bot
 import keyboards as kb
 from valid_func import check_price_value, check_reminder_id
-from db_func import delete_reminder, freeze_reminder, edit_reminder, check_status, show_all_reminders, reminder_id_list
+from db_func import delete_reminder, freeze_reminder, edit_reminder, check_status, show_all_reminders, reminder_id_list, check_reminder_type
 
 class ReminderDelete(StatesGroup):
     waiting_for_reminder_id = State()
@@ -107,28 +107,36 @@ async def edit_reminder_name(message: types.Message, state: FSMContext):
     if int(message.text[1:]) not in reminder_id_list(message.from_user.id):
         await message.reply("Choose reminder id from list")
         return
-    await state.update_data(reminder_id=message.text)
+    await state.update_data(reminder_id=int(message.text[1:]),)
+    reminder_type = check_reminder_type(int(message.text[1:]))
     await ReminderEdit.next()
-    await message.answer("Choose time / value.")
+    if reminder_type == "simple_typ":
+        await message.answer("Choose new time.", reply_markup=kb.time_markup())
+    else:
+        await message.answer("Send value.")
+
+@dp.callback_query_handler(lambda c: c.data == "1hour" or c.data == "3hour" or c.data == "6hour" or c.data == "12hour" or c.data == "24hour" ,state=ReminderEdit.waiting_for_new_value_time)
+async def edit_reminder_name(callback_query: types.CallbackQuery, state: FSMContext):
+    await state.update_data(new_value=callback_query.data[:-4])
+    await ReminderEdit.next()
+    await bot.send_message(callback_query.from_user.id, "Confirm new time: reminder every {} hours.".format(callback_query.data[:-4]), reply_markup=kb.yes_no_markup())
 
 @dp.message_handler(state=ReminderEdit.waiting_for_new_value_time, content_types=types.ContentTypes.TEXT) 
 async def edit_reminder_name(message: types.Message, state: FSMContext):
-    if check_price_value(message.text.lower()) == False:
-        await message.reply("Unvalid form. Try again.")
+    if check_price_value(message.text) != True:
+        await message.reply("Choose from the list")
         return
     await state.update_data(new_value=message.text)
     await ReminderEdit.next()
-    await message.answer("Choose time / value.")
-
-
+    await message.answer("Confirm new value: reminder every {} USD.".format(message.text), reply_markup=kb.yes_no_markup())
 
 @dp.callback_query_handler(lambda c: c.data == "answer_yes" or c.data == "answer_no" , state=ReminderEdit.waiting_for_check)
 async def freeze_reminder_step_3(callback_query: types.CallbackQuery, state: FSMContext):
     await bot.delete_message(callback_query.from_user.id, callback_query.message.message_id)
     if callback_query.data == "answer_yes":
         user_data = await state.get_data()
-        freeze_reminder(user_data['reminder_id'], user_data['reminder_status']) # not async
-        await bot.send_message(callback_query.from_user.id, f"Reminder {user_data['reminder_id']} successfully changed, new value/time {user_data['new_value']}.")
+        edit_reminder(user_data['reminder_id'], user_data['reminder_value']) # not async
+        await bot.send_message(callback_query.from_user.id, "Reminder {} successfully changed, new value/time {}.".format(user_data['new_value']))
     elif callback_query.data == "answer_no":
         await bot.send_message(callback_query.from_user.id, "Changing was canceled.")
     await state.finish()
