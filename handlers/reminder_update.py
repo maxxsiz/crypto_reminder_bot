@@ -135,8 +135,10 @@ async def freeze_reminder_step_3(callback_query: types.CallbackQuery, state: FSM
     await bot.delete_message(callback_query.from_user.id, callback_query.message.message_id)
     if callback_query.data == "answer_yes":
         user_data = await state.get_data()
-        edit_reminder(user_data['reminder_id'], user_data['reminder_value']) # not async
-        await bot.send_message(callback_query.from_user.id, "Reminder {} successfully changed, new value/time {}.".format(user_data['new_value']))
+        edit_reminder(user_data['reminder_id'], user_data['new_value']) # not async
+        print(user_data['reminder_id'])
+        print(user_data['new_value'])
+        await bot.send_message(callback_query.from_user.id, "Reminder successfully changed, new value/time {}.".format(user_data['new_value']))
     elif callback_query.data == "answer_no":
         await bot.send_message(callback_query.from_user.id, "Changing was canceled.")
     await state.finish()

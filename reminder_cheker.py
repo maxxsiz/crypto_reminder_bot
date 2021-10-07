@@ -6,7 +6,7 @@ from reminder_sender import send_value_reminder, send_simple_reminder
 
 
 def check_simple_reminders():
-    data_rows = get_min_data()
+    data_rows = get_min_data()  #TELEGRAM_ID, REM_ID, COIN_ID, REM_VALUE, VALUE_TIME, LAST_VALUE
     actual_coin_price_data = get_coin_list()
     data_for_sending = {}
     print("check_status")

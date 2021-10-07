@@ -88,11 +88,12 @@ def check_status(REM_ID):
     con.close()
     return status
 
-def edit_reminder(REM_VALUE, REM_ID):
+def edit_reminder(REM_ID, REM_VALUE):
     con, cur = db_connect()
     cur.execute("UPDATE REMINDERS set REM_VALUE = %s where REM_ID = %s;",(REM_VALUE, REM_ID)) 
     con.commit()  
     con.close()
+    print("done")
 
 def show_all_reminders(TELEGRAM_ID):
     con, cur = db_connect()
@@ -100,8 +101,8 @@ def show_all_reminders(TELEGRAM_ID):
     rows = cur.fetchall()  
     con.commit()  
     con.close()
-    simple_text = "SIMPLE TYPE\n Reminder ID   |  Coin  | Time step | Reminder status\n"
-    value_text = "____________________________________________________________________\nVALUE TYPE\n Reminder ID   |  Coin  | Price step | Reminder status | Last price\n"
+    simple_text = "SIMPLE TYPE\n Reminder ID    |  Coin  | Time step | Reminder status\n"
+    value_text = "____________________________________________________________\nVALUE TYPE\n Reminder ID   |  Coin  | Price step | Reminder status | Last price\n"
     for row in rows: 
         if row[1]=='simple_typ':
             simple_text += "/{} | {} | {}hour(s) | {} \n".format(row[0], row[3], row[4], row[2])
@@ -133,7 +134,6 @@ def get_new_id(TELEGRAM_ID):
     ids = [str(row[0])[-3:] for row in rows]
     new_count = int(sorted(ids)[-1])+1
     new_id = str(TELEGRAM_ID) + "000{}".format(str(new_count))[-3:]
-
     con.commit()  
     con.close()
     return new_id
@@ -145,7 +145,6 @@ def reminder_id_list(TELEGRAM_ID):
     con.commit()  
     con.close()
     id_list = [int(row[0]) for row in rows]
-    print(id_list)
     return id_list
 
 
@@ -153,7 +152,6 @@ def check_reminder_type(REM_ID):
     con, cur = db_connect()
     cur.execute("SELECT REM_TYPE from REMINDERS where REM_ID=%s;",(REM_ID,)) 
     rem_type = cur.fetchone()[0] 
-    print(rem_type)
     con.commit()  
     con.close()
     return rem_type
