@@ -1,5 +1,5 @@
 from pycoingecko import CoinGeckoAPI
-import time
+import datetime
 import json
 
 cg = CoinGeckoAPI()
@@ -8,10 +8,15 @@ def get_price(coin):
     with open('currentces.json') as f:
         data = json.load(f)
     return data[coin]['usd']
+    
+def get_price_all():
+    with open('currentces.json') as f:
+        data = json.load(f)
+    return data
 
 def time_now():
-    localtime = time.localtime()
-    result = time.strftime("%I:%M:%S %p", localtime)
+    now = datetime.datetime.now()
+    result = now.strftime("%d-%m-%Y %H:%M")
     return result 
 
 def get_coin_list():

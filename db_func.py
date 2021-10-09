@@ -24,8 +24,8 @@ def table_create():
         REM_TYPE TEXT NOT NULL,
         REM_STATUS BOOLEAN NOT NULL,
         COIN_ID TEXT NOT NULL,
-        REM_VALUE FLOAT NOT NULL,
-        VALUE_TIME TIME ,
+        REM_VALUE FLOAT NOT NULL,   
+        VALUE_TIME TEXT,
         LAST_VALUE FLOAT );''')
 
     con.commit() 
@@ -61,7 +61,7 @@ def simple_reminder_get_data(REM_VALUE):
 
 def value_reminder_get_data(REM_VALUE):
     con, cur = db_connect()
-    cur.execute("SELECT TELEGRAM_ID, COIN_ID from REMINDERS where REM_TYPE='value_type' and REM_STATUS=True and REM_VALUE = %s;",(REM_VALUE,))  
+    cur.execute("SELECT TELEGRAM_ID, COIN_ID from REMINDERS where REM_TYPE='value_typ' and REM_STATUS=True and REM_VALUE = %s;",(REM_VALUE,))  
     rows = cur.fetchall()  
     for row in rows: 
         print(row)
@@ -113,7 +113,7 @@ def show_all_reminders(TELEGRAM_ID):
 
 def get_min_data():
     con, cur = db_connect()
-    cur.execute("SELECT TELEGRAM_ID, REM_ID, COIN_ID, REM_VALUE, VALUE_TIME, LAST_VALUE from REMINDERS where REM_TYPE='value_type' and REM_STATUS=True ORDER BY TELEGRAM_ID")  
+    cur.execute("SELECT TELEGRAM_ID, REM_ID, COIN_ID, REM_VALUE, VALUE_TIME, LAST_VALUE from REMINDERS where REM_TYPE='value_typ' and REM_STATUS=True ORDER BY TELEGRAM_ID")  
     rows = cur.fetchall()  
     con.commit()  
     con.close()
@@ -155,3 +155,12 @@ def check_reminder_type(REM_ID):
     con.commit()  
     con.close()
     return rem_type
+
+def get_all_data():
+    con, cur = db_connect()
+    cur.execute("SELECT * from REMINDERS ")  
+    rows = cur.fetchall()  
+    con.commit()  
+    con.close()
+    for row in rows:
+        print(row)
