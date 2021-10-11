@@ -124,7 +124,7 @@ async def edit_reminder_name(callback_query: types.CallbackQuery, state: FSMCont
 @dp.message_handler(state=ReminderEdit.waiting_for_new_value_time, content_types=types.ContentTypes.TEXT) 
 async def edit_reminder_name(message: types.Message, state: FSMContext):
     if check_price_value(message.text) != True:
-        await message.reply("Choose from the list")
+        await message.reply("Choose correct value.")
         return
     await state.update_data(new_value=message.text)
     await ReminderEdit.next()

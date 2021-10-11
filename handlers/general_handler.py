@@ -1,4 +1,3 @@
-from aiogram.dispatcher.webhook import SendMessage
 from aiogram import types
 import os,sys,inspect
 
@@ -12,23 +11,8 @@ import keyboards as kb
 async def send_welcome(message: types.Message):
     if message.text == "/start":
         await message.reply( """Hi, I'm a bot reminder. I track changes in cryptocurrency prices and can constantly notify you about changes.\n
-                            There are two options. Constantly informing or informing when the price change for the chosen by you value (USD/USDT).\n
-                            For start press /menu :D""")
-        #if check_register(message.from_user.id) == False:
-        #else:
-            #await bot.send_message(message.from_user.id, "Але для початку потрібно вказати яка у вас година, нажміть на варіант ...")
-            #await bot.send_message(message.from_user.id, send_time_text("string"))
-            #await TimezoneInfo.current_user_time.set()###
+        There are two options. Constantly informing or informing when the price change for the chosen by you value at USD.\n
+        For start press /menu .""")
     elif message.text == "/menu":
-        await message.reply("Виберіть, що Вас цікавить.",reply_markup=kb.menu_markup())
+        await message.reply("Choose, what you want.",reply_markup=kb.menu_markup())
 
-#@dp.message_handler(state=TimezoneInfo.current_user_time, content_types=types.ContentTypes.TEXT)
-#async def do_register(message: types.Message, state: FSMContext):
-#    if message.text not in send_time_text("list"):
-#        await message.reply("Будь ласка вибери годину зі списку")
-#        return
-#    await state.update_data(reminder_periodisity=message.text)
-#    time_zone = calc_timezone(message.text[1:])
-#    add_new_user(message.from_user.id, message.from_user.first_name, message.from_user.last_name, date.today(), message.from_user.language_code, time_zone )
-#    await message.reply(f"Ваша часова зона {time_zone}.\nЖми /menu щоб продовжити.")
-#    await state.finish()

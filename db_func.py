@@ -4,7 +4,6 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from settings import pswd
 def db_connect():
     try:
-        # Подключение к существующей базе данных
         con = psycopg2.connect(user="postgres",
                                 database="postgres",
                                 password=pswd,
@@ -13,7 +12,7 @@ def db_connect():
         cur = con.cursor()
         return con, cur
     except (Exception, Error) as error:
-        print("Ошибка при работе с PostgreSQL", error)
+        print("Error at working with PostgreSQL", error)
 
 
 def table_create():
@@ -101,13 +100,13 @@ def show_all_reminders(TELEGRAM_ID):
     rows = cur.fetchall()  
     con.commit()  
     con.close()
-    simple_text = "SIMPLE TYPE\n Reminder ID    |  Coin  | Time step | Reminder status\n"
-    value_text = "____________________________________________________________\nVALUE TYPE\n Reminder ID   |  Coin  | Price step | Reminder status | Last price\n"
+    simple_text = "SIMPLE TYPE\n" + "{:^16} | {:^12} | {:^9} | {}\n".format("Reminder ID","Coin","Time step","Status",)
+    value_text = "\nVALUE TYPE\n" + "{:^16} | {:^12} | {:^10} | {} | {:^12}\n".format("Reminder ID","Coin","Price step","Status","Last price")
     for row in rows: 
         if row[1]=='simple_typ':
-            simple_text += "/{} | {} | {}hour(s) | {} \n".format(row[0], row[3], row[4], row[2])
+            simple_text += "{:^16} | {:^12} | {:^9} | {:^6}\n".format("/"+str(row[0]), row[3], str(row[4]) + "hour(s)", row[2])
         else:
-            value_text += "/{} | {} | {}USD | {} | {}USD , {} \n".format(row[0], row[3], row[4], row[2], row[6], row[5])
+            value_text += "{:^16} | {:^12} | {:^10} | {:^6} | {:^12} , {}\n".format("/"+str(row[0]), row[3], str(row[4])+"USD", row[2], str(row[6])+"USD", row[5])
     text = simple_text + value_text
     return text
 

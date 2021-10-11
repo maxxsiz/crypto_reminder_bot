@@ -30,3 +30,6 @@ async def process_all_callback(callback_query: types.CallbackQuery):
     elif callback_query.data == "other":
         await bot.delete_message(chat_id, message_id)
         await bot.send_message(chat_id, show_all_reminders(chat_id))
+    elif callback_query.data == "cancel":
+        await bot.delete_message(chat_id, message_id)
+        
