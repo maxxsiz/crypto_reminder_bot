@@ -63,7 +63,7 @@ async def add_reminderdb_step_5(message: types.Message, state: FSMContext):
         return
     await state.update_data(coin_id=message.text)
     await ReminderDbInfo.next()
-    await message.answer("Send your USD value at change on which we will inform you. \n (e.g. every 100USD, if price of BTC change from 45000 to 45100 we inform you) \n Use '.' as a separator if you need ( e.g. 0.5) ")
+    await message.answer("Send your USD value at change on which we will inform you. \n (e.g. every 100$, if price of BTC change from 45000$ to 45100$ we inform you) \n Use '.' as a separator if you need ( e.g. 0.5) ")
 
 @dp.message_handler(state=ReminderDbInfo.waiting_for_reminder_price_value, content_types=types.ContentTypes.TEXT)
 async def add_reminderdb_step_6(message: types.Message, state: FSMContext):
@@ -82,5 +82,5 @@ async def add_reminderdb_step_6(message: types.Message, state: FSMContext):
                 get_price(user_data['coin_id'][1:]))#LAST_VALUE
                 
     await message.answer(f"We will inform you about the current pirce {user_data['coin_id']}.\n"
-                     f"every: {message.text} USD")
+                     f"every: {message.text}$")
     await state.finish()

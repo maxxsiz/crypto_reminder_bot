@@ -11,9 +11,6 @@ def check_price_value(value):
         value = float(value)
     except:
         return False
-
     return True
 
-def check_reminder_id(rm_id):
-    return True
 

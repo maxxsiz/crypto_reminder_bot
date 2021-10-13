@@ -30,6 +30,6 @@ def get_coin_list_for_send():
         data = json.load(f)
     text = ''
     for key, val in data.items():
-        text += "\n{} | {} USD".format("/"+str(key), val['usd']) 
+        text += "\n{} | {}$".format("/"+str(key), val['usd']) 
     return text
 

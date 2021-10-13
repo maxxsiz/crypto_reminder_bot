@@ -106,7 +106,7 @@ def show_all_reminders(TELEGRAM_ID):
         if row[1]=='simple_typ':
             simple_text += "{:^16} | {:^12} | {:^9} | {:^6}\n".format("/"+str(row[0]), row[3], str(row[4]) + "hour(s)", row[2])
         else:
-            value_text += "{:^16} | {:^12} | {:^10} | {:^6} | {:^12} , {}\n".format("/"+str(row[0]), row[3], str(row[4])+"USD", row[2], str(row[6])+"USD", row[5])
+            value_text += "{:^16} | {:^12} | {:^10} | {:^6} | {:^12} , {}\n".format("/"+str(row[0]), row[3], str(row[4])+"$", row[2], str(row[6])+"$ ", row[5])
     text = simple_text + value_text
     return text
 

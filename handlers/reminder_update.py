@@ -8,7 +8,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 from misc import dp, bot
 import keyboards as kb
-from valid_func import check_price_value, check_reminder_id
+from valid_func import check_price_value
 from db_func import delete_reminder, freeze_reminder, edit_reminder, check_status, show_all_reminders, reminder_id_list, check_reminder_type
 
 class ReminderDelete(StatesGroup):
@@ -128,7 +128,7 @@ async def edit_reminder_name(message: types.Message, state: FSMContext):
         return
     await state.update_data(new_value=message.text)
     await ReminderEdit.next()
-    await message.answer("Confirm new value: reminder every {} USD.".format(message.text), reply_markup=kb.yes_no_markup())
+    await message.answer("Confirm new value: reminder every {}$.".format(message.text), reply_markup=kb.yes_no_markup())
 
 @dp.callback_query_handler(lambda c: c.data == "answer_yes" or c.data == "answer_no" , state=ReminderEdit.waiting_for_check)
 async def freeze_reminder_step_3(callback_query: types.CallbackQuery, state: FSMContext):

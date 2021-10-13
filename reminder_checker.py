@@ -57,13 +57,13 @@ def send_message_value(data):
                 emodji = "📈"
             else:
                 emodji = "📉"
-            message_text += "🔔<code>{} price change {} <strong>{} USD</strong></code>\n".format(
+            message_text += "🔔<code>{} price change {} <strong>{}$</strong></code>\n".format(
                                 key.upper(), 
                                 emodji,
                                 float_round(value['coin_change'],str(value['last_coin_price'])))
             message_text += "{:^16}➡️{:^16}\n".format(
-                                str(value['last_coin_price']) + " USD",
-                                str(value['actual_coin_price']) + " USD")
+                                str(value['last_coin_price']) + " $",
+                                str(value['actual_coin_price']) + " $")
             message_text += "{}➡️{}\n\n".format(
                                 value['last_coin_price_time'],
                                 value['actual_coin_price_time'])
@@ -77,9 +77,6 @@ def send_message_value(data):
     except:
         print('Send message error')
         return False
-
-
-
 
 
 def check_db_reminders():
