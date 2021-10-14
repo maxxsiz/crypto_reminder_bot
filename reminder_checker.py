@@ -1,6 +1,6 @@
 from api import time_now
 from api import get_price, time_now, get_price_all
-from db_func import check_status, get_min_data, update_value_reminder
+from db_func import check_status, get_min_data, update_value_reminder, simple_reminder_get_data
 import requests
 from settings import URL, TOKEN
 
@@ -79,5 +79,48 @@ def send_message_value(data):
         return False
 
 
-def check_db_reminders():
-    pass
+def check_db_reminders(delay):
+    data_rows = simple_reminder_get_data(delay)  # request data from the database
+    actual_coin_price_data = get_price_all() # request actual coins prices
+    data_for_sending = {}
+    for i in range(len(data_rows)):
+        actual_coin_price = actual_coin_price_data[data_rows[i][1]]['usd']
+        if len(data_for_sending) == 0: #when the sending data is empty
+            data_for_sending['tel_id'] = data_rows[i][0] #add user`s id
+        elif data_for_sending['tel_id'] != data_rows[i][0]: #when we start sending data for new user
+            if len(data_for_sending) < 2:
+                pass
+            else:
+                send_message_simple(data_for_sending) #send complete data for user
+            data_for_sending.clear() #clear data 
+            data_for_sending['tel_id'] = data_rows[i][0] #add new user`s id
+        elif data_for_sending['tel_id'] == data_rows[i][0]: #if the id same, then continue to fill the data
+            pass
+
+        data_for_sending[data_rows[i][1]] = actual_coin_price  #adding a new coin to the data
+    
+        if i == int(len(data_rows)-1):  #when all data from the database is processed we need send last user`s data
+            send_message_value(data_for_sending)
+            data_for_sending.clear()
+
+
+def send_message_simple(data):
+    message_text = "Current coins prices:\n"
+    for key, value in data.items():
+        if key == 'tel_id':
+            chat_id = value
+        else:
+            message_text += "🔔<code>{}|{}$</code>\n".format(
+                                key.upper(), 
+                                value)
+
+    message_data = {
+        'chat_id': chat_id,
+        'text': message_text,
+        'parse_mode': 'HTML' 
+    }
+    try:
+        request = requests.post(f'{URL}{TOKEN}/sendMessage', data=message_data)  #sending message
+    except:
+        print('Send message error')
+        return False

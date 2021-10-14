@@ -50,6 +50,6 @@ def time_markup():
     markup.add(InlineKeyboardButton("every 1 hour", callback_data="1hour"),
                 InlineKeyboardButton("every 3 hour", callback_data="3hour"),
                 InlineKeyboardButton("every 6 hour", callback_data="6hour"),
-                InlineKeyboardButton("every 12 hour", callback_data="12hour"),
-                InlineKeyboardButton("every 24 hour", callback_data="24hour"))
+                InlineKeyboardButton("at 09:00 and 21:00", callback_data="12hour"),
+                InlineKeyboardButton("every day at 09:00", callback_data="24hour"))
     return markup
